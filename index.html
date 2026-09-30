@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPA 9 - Interactive Lab</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #07111f;
+    color: white;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.header {
+    text-align: center;
+    padding: 30px 15px;
+    background: linear-gradient(135deg, #102d52, #351c61);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 35px;
+}
+
+.header p {
+    color: #c8d8ee;
+}
+
+.container {
+    width: 94%;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #07111f;
+}
+
+.nav button {
+    flex-shrink: 0;
+    border: 0;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #182943;
+    color: white;
+}
+
+.nav button.active {
+    background: #35c9ff;
+    color: #06111e;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.card {
+    background: #101e34;
+    border: 1px solid #263c60;
+    border-radius: 18px;
+    padding: 20px;
+    margin: 15px 0;
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #63d8ff;
+}
+
+.card h3 {
+    color: #a8e8ff;
+}
+
+.info {
+    padding: 14px;
+    border-radius: 12px;
+    background: #0a2940;
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.btn {
+    border: 0;
+    border-radius: 12px;
+    padding: 13px 16px;
+    background: #25446d;
+    color: white;
+    margin: 4px;
+}
+
+.btn.primary {
+    background: #35c9ff;
+    color: #06111e;
+    font-weight: bold;
+}
+
+.btn:hover {
+    filter: brightness(1.2);
+}
+
+.stat {
+    background: #091629;
+    padding: 15px;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.stat b {
+    display: block;
+    color: #54d9ff;
+    font-size: 28px;
+}
+
+.progress {
+    height: 10px;
+    background: #09111f;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #35c9ff;
+    transition: width .3s;
+}
+
+/* QUIZ */
+
+.question {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.option {
+    width: 100%;
+    padding: 14px;
+    margin: 6px 0;
+    border: 1px solid #2c456b;
+    border-radius: 12px;
+    background: #162a47;
+    color: white;
+    text-align: left;
+}
+
+.option.correct {
+    background: #126343;
+}
+
+.option.wrong {
+    background: #6d2735;
+}
+
+/* GAMES */
+
+.game-area {
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #2d527c;
+    border-radius: 15px;
+    background:
+        radial-gradient(circle, #31577e 1px, transparent 1px);
+    background-size: 25px 25px;
+}
+
+.cell {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    position: absolute;
+    border: 0;
+    background: radial-gradient(
+        circle at 30% 30%,
+        white,
+        #4be2ff 15%,
+        #2763dc 50%,
+        #10194a 75%
+    );
+    box-shadow: 0 0 25px #42dfff;
+}
+
+.memory {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    max-width: 450px;
+    margin: auto;
+}
+
+.memory button {
+    aspect-ratio: 1;
+    border: 0;
+    border-radius: 12px;
+    background: #20375b;
+    color: white;
+    font-size: 25px;
+}
+
+.memory button.open {
+    background: #42689b;
+}
+
+.sequence {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sequence button {
+    padding: 13px;
+    border-radius: 10px;
+    border: 0;
+    background: #25446d;
+    color: white;
+}
+
+.result {
+    min-height: 28px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    margin: 6px 0;
+    border: 1px solid #304c72;
+    border-radius: 10px;
+    background: #091729;
+    color: white;
+}
+
+.hidden-box {
+    text-align: center;
+    padding: 25px;
+    border: 1px dashed #4d6c9c;
+    border-radius: 15px;
+}
+
+footer {
+    text-align: center;
+    color: #7186a5;
+    padding: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <h1 id="secretTitle">🧬 IPA 9 INTERACTIVE LAB</h1>
+    <p>Belajar IPA sambil bermain dan bereksperimen.</p>
+</header>
+
+<div class="container">
+
+<nav class="nav">
+    <button class="navBtn active" data-page="home">🏠 Home</button>
+    <button class="navBtn" data-page="materi">📚 Materi</button>
+    <button class="navBtn" data-page="quiz">📝 Quiz</button>
+    <button class="navBtn" data-page="game">🎮 Games</button>
+    <button class="navBtn" data-page="secret">🔐 Secret</button>
+</nav>
+
+<!-- HOME -->
+
+<section id="home" class="page active">
+
+<div class="card">
+    <h2>🚀 Selamat Datang!</h2>
+
+    <p>
+        Ini adalah laboratorium IPA kelas 9.
+        Kamu bisa membaca materi, mengerjakan quiz,
+        bermain mini-game, dan mencari hidden game.
+    </p>
+
+    <div class="grid">
+
+        <div class="stat">
+            <small>XP</small>
+            <b id="xp">0</b>
+        </div>
+
+        <div class="stat">
+            <small>Level</small>
+            <b id="level">1</b>
+        </div>
+
+        <div class="stat">
+            <small>🏆 Achievement</small>
+            <b id="achievement">0</b>
+        </div>
+
+    </div>
+
+    <div class="progress">
+        <div id="progressBar" class="progress-bar"></div>
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>🎯 Pilih Aktivitas</h2>
+
+    <div class="grid">
+
+        <button class="btn primary go" data-page="materi">
+            📚 Baca Materi
+        </button>
+
+        <button class="btn primary go" data-page="quiz">
+            📝 Kerjakan Quiz
+        </button>
+
+        <button class="btn primary go" data-page="game">
+            🎮 Main Game
+        </button>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>🏆 Achievement</h2>
+
+    <div id="achievementList">
+        Belum ada achievement.
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- MATERI -->
+
+<section id="materi" class="page">
+
+<div class="card">
+
+<h2>🧬 1. Pertumbuhan & Perkembangan</h2>
+
+<h3>Fase Embrionik</h3>
+
+<ul>
+<li><b>Morula:</b> bola sel padat.</li>
+<li><b>Blastula:</b> bola sel yang memiliki rongga.</li>
+<li><b>Gastrula:</b> terbentuk ektoderm, mesoderm, dan endoderm.</li>
+<li><b>Organogenesis:</b> pembentukan organ.</li>
+</ul>
+
+<h3>🦋 Metamorfosis Sempurna</h3>
+
+<div class="info">
+Telur → Larva → Pupa → Imago
+<br>
+Contoh: kupu-kupu dan nyamuk.
+</div>
+
+<h3>🦗 Metamorfosis Tidak Sempurna</h3>
+
+<div class="info">
+Telur → Nimfa → Imago
+<br>
+Contoh: belalang dan kecoak.
+</div>
+
+<h3>👦 Pubertas</h3>
+
+<p>
+Pubertas adalah masa perubahan menuju kematangan seksual
+yang dipengaruhi oleh hormon.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>🧠 2. Sistem Koordinasi</h2>
+
+<h3>⚡ Sistem Saraf</h3>
+
+<p>
+Menerima rangsangan dan memberikan respons secara cepat
+melalui neuron.
+</p>
+
+<h3>🧪 Sistem Hormon</h3>
+
+<p>
+Menggunakan hormon yang diedarkan melalui darah untuk
+mengatur fungsi tubuh.
+</p>
+
+<div class="info">
+⚡ Saraf → respons cepat.
+<br>
+🧪 Hormon → umumnya lebih lambat dan dapat berlangsung lebih lama.
+</div>
+
+<h3>⚖️ Homeostasis</h3>
+
+<p>
+Kemampuan tubuh mempertahankan kondisi internal agar tetap stabil.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>⚖️ 3. Tekanan Zat Padat</h2>
+
+<div class="info" style="text-align:center;font-size:28px">
+P = F / A
+</div>
+
+<p>
+P = tekanan (Pa)<br>
+F = gaya (N)<br>
+A = luas bidang (m²)
+</p>
+
+<div class="info">
+Semakin besar gaya → tekanan semakin besar.
+<br>
+Semakin kecil luas → tekanan semakin besar.
+</div>
+
+<h3>🧮 Kalkulator Tekanan</h3>
+
+<input id="force" type="number" placeholder="Masukkan gaya (N)">
+
+<input id="area" type="number" placeholder="Masukkan luas (m²)">
+
+<button id="calculate" class="btn primary">
+Hitung Tekanan
+</button>
+
+<div id="calculateResult" class="result"></div>
+
+</div>
+
+
+<div class="card">
+
+<h2>👁️ 4. Sistem Indera</h2>
+
+<div class="grid">
+
+<div class="info">
+<h3>👁️ Mata</h3>
+Kornea, iris, pupil, lensa, retina, saraf optik.
+</div>
+
+<div class="info">
+<h3>👂 Telinga</h3>
+Gendang telinga, tulang pendengaran, koklea,
+saluran semisirkularis.
+</div>
+
+<div class="info">
+<h3>👃 Hidung</h3>
+Epitel olfaktori menerima rangsangan bau.
+</div>
+
+<div class="info">
+<h3>👅 Lidah</h3>
+Papila mengandung tunas pengecap.
+</div>
+
+<div class="info">
+<h3>🖐️ Kulit</h3>
+Memiliki berbagai reseptor sentuhan, tekanan,
+suhu, dan nyeri.
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- QUIZ -->
+
+<section id="quiz" class="page">
+
+<div class="card">
+
+<h2>📝 Quiz IPA</h2>
+
+<div id="quizNumber">
+Soal 1 dari 10
+</div>
+
+<div class="progress">
+<div id="quizProgress" class="progress-bar"></div>
+</div>
+
+<div id="questionBox" style="margin-top:20px">
+</div>
+
+<div id="quizResult" class="result">
+</div>
+
+<button
+    id="nextQuestion"
+    class="btn primary"
+    style="display:none">
+    Soal Berikutnya →
+</button>
+
+</div>
+
+</section>
+
+
+<!-- GAMES -->
+
+<section id="game" class="page">
+
+
+<!-- GAME 1 -->
+
+<div class="card">
+
+<h2>🧫 Game 1 — Tangkap Sel</h2>
+
+<p>
+Klik sel sebanyak mungkin dalam waktu 15 detik.
+</p>
+
+<div class="grid">
+
+<div class="stat">
+Waktu
+<b id="cellTimer">15</b>
+</div>
+
+<div class="stat">
+Tangkap
+<b id="cellScore">0</b>
+</div>
+
+</div>
+
+<button id="startCell" class="btn primary">
+▶ Mulai Game
+</button>
+
+<div id="cellArea" class="game-area">
+</div>
+
+<div id="cellResult" class="result">
+</div>
+
+</div>
+
+
+<!-- GAME 2 -->
+
+<div class="card">
+
+<h2>🧠 Game 2 — Memory Indera</h2>
+
+<p>
+Cari semua pasangan simbol.
+</p>
+
+<div id="memoryGame" class="memory">
+</div>
+
+<div id="memoryResult" class="result">
+</div>
+
+<button id="resetMemory" class="btn">
+🔄 Acak Lagi
+</button>
+
+</div>
+
+
+<!-- GAME 3 -->
+
+<div class="card">
+
+<h2>⚡ Game 3 — Benar atau Salah</h2>
+
+<div id="tfQuestion" class="question">
+Tekan mulai.
+</div>
+
+<button id="tfStart" class="btn primary">
+▶ Mulai
+</button>
+
+<div id="tfButtons" style="display:none">
+
+<button id="trueButton" class="btn primary">
+✅ BENAR
+</button>
+
+<button id="falseButton" class="btn">
+❌ SALAH
+</button>
+
+</div>
+
+<div id="tfResult" class="result">
+</div>
+
+<div>
+Skor:
+<b id="tfScore">0</b>
+</div>
+
+</div>
+
+
+<!-- GAME 4 -->
+
+<div class="card">
+
+<h2>🦋 Game 4 — Susun Metamorfosis</h2>
+
+<p>
+Klik tahap metamorfosis berdasarkan urutan yang benar.
+</p>
+
+<div id="metaButtons" class="sequence">
+</div>
+
+<div id="metaResult" class="result">
+</div>
+
+<button id="metaReset" class="btn">
+🔄 Reset
+</button>
+
+</div>
+
+
+<!-- GAME 5 -->
+
+<div class="card">
+
+<h2>👁️ Game 5 — Tebak Indera</h2>
+
+<div id="senseQuestion" class="question">
+</div>
+
+<div id="senseOptions">
+</div>
+
+<div id="senseResult" class="result">
+</div>
+
+</div>
+
+
+<!-- GAME 6 -->
+
+<div class="card">
+
+<h2>⚡ Game 6 — Reaksi Cepat</h2>
+
+<p>
+Tunggu sampai tombol berubah menjadi hijau.
+Jangan klik terlalu cepat!
+</p>
+
+<button
+    id="reactionButton"
+    class="btn"
+    style="width:100%;height:100px;background:#263957">
+    TUNGGU...
+</button>
+
+<div id="reactionResult" class="result">
+</div>
+
+</div>
+
+</section>
+
+
+<!-- SECRET -->
+
+<section id="secret" class="page">
+
+<div class="card">
+
+<h2>🔐 SECRET LAB</h2>
+
+<div class="hidden-box">
+
+<p>
+Ada beberapa hidden game yang disembunyikan.
+</p>
+
+<p>
+🔎 Coba klik judul website sebanyak <b>7 kali</b>.
+</p>
+
+<p>
+⌨️ Atau ketik kode rahasia:
+<b>IPA9</b>
+</p>
+
+<button id="secretButton" class="btn primary">
+🧪 Eksperimen Rahasia
+</button>
+
+<div id="secretResult" class="result">
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<footer>
+🧬 IPA 9 Interactive Lab
+</footer>
+
+</div>
+
+
+<script>
+
+/* ================================
+   SISTEM DASAR WEBSITE
+================================ */
+
+const pages = document.querySelectorAll(".page");
+const navButtons = document.querySelectorAll(".navBtn");
+const goButtons = document.querySelectorAll(".go");
+
+function openPage(pageName) {
+
+    pages.forEach(function(page) {
+        page.classList.remove("active");
+    });
+
+    navButtons.forEach(function(button) {
+        button.classList.remove("active");
+    });
+
+    const selectedPage = document.getElementById(pageName);
+
+    if (selectedPage) {
+        selectedPage.classList.add("active");
+    }
+
+    navButtons.forEach(function(button) {
+
+        if (button.dataset.page === pageName) {
+            button.classList.add("active");
+        }
+
+    });
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+navButtons.forEach(function(button) {
+
+    button.addEventListener("click", function() {
+        openPage(button.dataset.page);
+    });
+
+});
+
+
+goButtons.forEach(function(button) {
+
+    button.addEventListener("click", function() {
+        openPage(button.dataset.page);
+    });
+
+});
+
+
+/* ================================
+   SISTEM XP
+================================ */
+
+let xp = 0;
+let achievements = [];
+
+function addXP(amount) {
+
+    xp += amount;
+
+    document.getElementById("xp").textContent = xp;
+
+    const level = Math.floor(xp / 100) + 1;
+
+    document.getElementById("level").textContent = level;
+
+    let percentage = xp % 100;
+
+    document.getElementById("progressBar").style.width =
+        percentage + "%";
+
+}
+
+
+function unlockAchievement(name) {
+
+    if (achievements.includes(name)) {
+        return;
+    }
+
+    achievements.push(name);
+
+    document.getElementById("achievement").textContent =
+        achievements.length;
+
+    const list =
+        document.getElementById("achievementList");
+
+    list.innerHTML =
+        achievements.map(function(item) {
+            return "🏆 " + item;
+        }).join("<br>");
+
+    addXP(20);
+
+}
+
+
+/* ================================
+   KALKULATOR TEKANAN
+================================ */
+
+document
+    .getElementById("calculate")
+    .addEventListener("click", function() {
+
+        const force =
+            Number(document.getElementById("force").value);
+
+        const area =
+            Number(document.getElementById("area").value);
+
+        const result =
+            document.getElementById("calculateResult");
+
+        if (
+            !Number.isFinite(force) ||
+            !Number.isFinite(area) ||
+            force < 0 ||
+            area <= 0
+        ) {
+
+            result.textContent =
+                "⚠️ Masukkan gaya ≥ 0 dan luas > 0.";
+
+            return;
+        }
+
+        const pressure = force / area;
+
+        result.textContent =
+            "✅ Tekanan = " +
+            pressure +
+            " Pa";
+
+        addXP(5);
+
+    });
+
+
+/* ================================
+   QUIZ
+================================ */
+
+const questions = [
+
+    {
+        question:
+            "Urutan metamorfosis sempurna yang benar adalah...",
+        options: [
+            "Telur → Nimfa → Imago",
+            "Telur → Larva → Pupa → Imago",
+            "Telur → Pupa → Nimfa",
+            "Nimfa → Larva → Imago"
+        ],
+        answer: 1
+    },
+
+    {
+        question:
+            "Tahap embrionik berupa bola sel padat disebut...",
+        options: [
+            "Blastula",
+            "Gastrula",
+            "Morula",
+            "Organogenesis"
+        ],
+        answer: 2
+    },
+
+    {
+        question:
+            "Kemampuan tubuh menjaga kondisi internal tetap stabil disebut...",
+        options: [
+            "Metamorfosis",
+            "Homeostasis",
+            "Fertilisasi",
+            "Organogenesis"
+        ],
+        answer: 1
+    },
+
+    {
+        question:
+            "Organ penghasil sperma adalah...",
+        options: [
+            "Ovarium",
+            "Uterus",
+            "Testis",
+            "Tuba falopi"
+        ],
+        answer: 2
+    },
+
+    {
+        question:
+            "Rumus tekanan yang benar adalah...",
+        options: [
+            "P = F × A",
+            "P = A / F",
+            "P = F / A",
+            "P = F + A"
+        ],
+        answer: 2
+    },
+
+    {
+        question:
+            "Jika luas bidang diperkecil, tekanan akan...",
+        options: [
+            "Membesar",
+            "Mengecil",
+            "Tetap",
+            "Menjadi nol"
+        ],
+        answer: 0
+    },
+
+    {
+        question:
+            "Bagian mata yang menerima rangsang cahaya adalah...",
+        options: [
+            "Iris",
+            "Kornea",
+            "Retina",
+            "Pupil"
+        ],
+        answer: 2
+    },
+
+    {
+        question:
+            "Bagian telinga yang mengubah getaran menjadi impuls saraf adalah...",
+        options: [
+            "Daun telinga",
+            "Koklea",
+            "Gendang telinga",
+            "Tuba Eustachius"
+        ],
+        answer: 1
+    },
+
+    {
+        question:
+            "Epitel olfaktori terdapat pada sistem...",
+        options: [
+            "Pendengaran",
+            "Penglihatan",
+            "Penciuman",
+            "Peraba"
+        ],
+        answer: 2
+    },
+
+    {
+        question:
+            "Reseptor yang berhubungan dengan nyeri adalah...",
+        options: [
+            "Pacini",
+            "Krause",
+            "Ujung saraf bebas",
+            "Meissner"
+        ],
+        answer: 2
+    }
+
+];
+
+let currentQuestion = 0;
+let quizScore = 0;
+let answered = false;
+
+
+function showQuestion() {
+
+    answered = false;
+
+    const question =
+        questions[currentQuestion];
+
+    document.getElementById("quizNumber").textContent =
+        "Soal " +
+        (currentQuestion + 1) +
+        " dari " +
+        questions.length;
+
+    document.getElementById("quizProgress").style.width =
+        ((currentQuestion / questions.length) * 100) +
+        "%";
+
+    const box =
+        document.getElementById("questionBox");
+
+    box.innerHTML = "";
+
+    const title =
+        document.createElement("div");
+
+    title.className = "question";
+
+    title.textContent =
+        question.question;
+
+    box.appendChild(title);
+
+
+    question.options.forEach(function(option, index) {
+
+        const button =
+            document.createElement("button");
+
+        button.className = "option";
+
+        button.textContent =
+            option;
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                if (answered) {
+                    return;
+                }
+
+                answered = true;
+
+                const allOptions =
+                    box.querySelectorAll(".option");
+
+                allOptions.forEach(function(item) {
+                    item.disabled = true;
+                });
+
+
+                if (index === question.answer) {
+
+                    button.classList.add("correct");
+
+                    quizScore += 10;
+
+                    addXP(10);
+
+                    document.getElementById(
+                        "quizResult"
+                    ).textContent =
+                        "✅ Benar! +10 XP";
+
+                } else {
+
+                    button.classList.add("wrong");
+
+                    allOptions[
+                        question.answer
+                    ].classList.add("correct");
+
+                    document.getElementById(
+                        "quizResult"
+                    ).textContent =
+                        "❌ Kurang tepat.";
+
+                }
+
+                document.getElementById(
+                    "nextQuestion"
+                ).style.display =
+                    "inline-block";
+
+            }
+        );
+
+        box.appendChild(button);
+
+    });
+
+}
+
+
+document
+    .getElementById("nextQuestion")
+    .addEventListener("click", function() {
+
+        currentQuestion++;
+
+        document.getElementById(
+            "nextQuestion"
+        ).style.display = "none";
+
+        document.getElementById(
+            "quizResult"
+        ).textContent = "";
+
+        if (currentQuestion >= questions.length) {
+
+            document.getElementById(
+                "questionBox"
+            ).innerHTML =
+                "<div class='info'>" +
+                "🎉 Quiz selesai!<br>" +
+                "Skor kamu: " +
+                quizScore +
+                " / 100" +
+                "</div>";
+
+            document.getElementById(
+                "quizNumber"
+            ).textContent =
+                "SELESAI";
+
+            document.getElementById(
+                "quizProgress"
+            ).style.width = "100%";
+
+            unlockAchievement("Quiz Master");
+
+            return;
+        }
+
+        showQuestion();
+
+    });
+
+
+showQuestion();
+
+
+/* ================================
+   MINI GAME 1
+   TANGKAP SEL
+================================ */
+
+let cellInterval = null;
+let cellTime = 15;
+let cellScore = 0;
+
+
+function createCell() {
+
+    const area =
+        document.getElementById("cellArea");
+
+    area.innerHTML = "";
+
+    if (cellTime <= 0) {
+        return;
+    }
+
+    const cell =
+        document.createElement("button");
+
+    cell.className = "cell";
+
+    cell.setAttribute(
+        "aria-label",
+        "Tangkap sel"
+    );
+
+    const maxX =
+        Math.max(
+            0,
+            area.clientWidth - 60
+        );
+
+    const maxY =
+        Math.max(
+            0,
+            area.clientHeight - 60
+        );
+
+    cell.style.left =
+        Math.random() * maxX + "px";
+
+    cell.style.top =
+        Math.random() * maxY + "px";
+
+
+    cell.addEventListener("click", function() {
+
+        cellScore++;
+
+        document.getElementById(
+            "cellScore"
+        ).textContent = cellScore;
+
+        addXP(2);
+
+        createCell();
+
+    });
+
+    area.appendChild(cell);
+}
+
+
+document
+    .getElementById("startCell")
+    .addEventListener("click", function() {
+
+        clearInterval(cellInterval);
+
+        cellTime = 15;
+        cellScore = 0;
+
+        document.getElementById(
+            "cellTimer"
+        ).textContent = cellTime;
+
+        document.getElementById(
+            "cellScore"
+        ).textContent = cellScore;
+
+        document.getElementById(
+            "cellResult"
+        ).textContent = "";
+
+        createCell();
+
+
+        cellInterval =
+            setInterval(function() {
+
+                cellTime--;
+
+                document.getElementById(
+                    "cellTimer"
+                ).textContent =
+                    cellTime;
+
+                if (cellTime <= 0) {
+
+                    clearInterval(cellInterval);
+
+                    document.getElementById(
+                        "cellArea"
+                    ).innerHTML =
+                        "<div style='text-align:center;padding-top:120px'>" +
+                        "⏰ Waktu habis!" +
+                        "</div>";
+
+                    document.getElementById(
+                        "cellResult"
+                    ).textContent =
+                        "Kamu menangkap " +
+                        cellScore +
+                        " sel.";
+
+                    if (cellScore >= 8) {
+                        unlockAchievement(
+                            "Pemburu Sel"
+                        );
+                    }
+
+                }
+
+            }, 1000);
+
+    });
+
+
+/* ================================
+   MINI GAME 2
+   MEMORY
+================================ */
+
+const memorySymbols = [
+    "👁️",
+    "👁️",
+    "👂",
+    "👂",
+    "👃",
+    "👃",
+    "👅",
+    "👅"
+];
+
+let firstCard = null;
+let memoryLock = false;
+let memoryMatches = 0;
+
+
+function createMemory() {
+
+    const game =
+        document.getElementById("memoryGame");
+
+    game.innerHTML = "";
+
+    firstCard = null;
+    memoryLock = false;
+    memoryMatches = 0;
+
+    const shuffled =
+        [...memorySymbols].sort(
+            function() {
+                return Math.random() - 0.5;
+            }
+        );
+
+
+    shuffled.forEach(function(symbol) {
+
+        const button =
+            document.createElement("button");
+
+        button.textContent = "❓";
+
+        button.dataset.symbol =
+            symbol;
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                if (
+                    memoryLock ||
+                    button.classList.contains("open")
+                ) {
+                    return;
+                }
+
+
+                button.classList.add("open");
+
+                button.textContent =
+                    symbol;
+
+
+                if (!firstCard) {
+
+                    firstCard = button;
+
+                    return;
+                }
+
+
+                if (
+                    firstCard.dataset.symbol ===
+                    button.dataset.symbol
+                ) {
+
+                    memoryMatches++;
+
+                    addXP(5);
+
+                    firstCard = null;
+
+                    document.getElementById(
+                        "memoryResult"
+                    ).textContent =
+                        "✅ Pasangan ditemukan!";
+
+
+                    if (memoryMatches === 4) {
+
+                        document.getElementById(
+                            "memoryResult"
+                        ).textContent =
+                            "🎉 Semua pasangan ditemukan!";
+
+                        unlockAchievement(
+                            "Memory Master"
+                        );
+
+                    }
+
+                } else {
+
+                    memoryLock = true;
+
+                    const oldCard =
+                        firstCard;
+
+                    setTimeout(function() {
+
+                        oldCard.classList.remove(
+                            "open"
+                        );
+
+                        oldCard.textContent =
+                            "❓";
+
+                        button.classList.remove(
+                            "open"
+                        );
+
+                        button.textContent =
+                            "❓";
+
+                        firstCard = null;
+
+                        memoryLock = false;
+
+                    }, 700);
+
+                }
+
+            }
+        );
+
+        game.appendChild(button);
+
+    });
+
+}
+
+
+document
+    .getElementById("resetMemory")
+    .addEventListener(
+        "click",
+        createMemory
+    );
+
+createMemory();
+
+
+/* ================================
+   MINI GAME 3
+   BENAR / SALAH
+================================ */
+
+const trueFalseQuestions = [
+
+    [
+        "Retina menerima rangsangan cahaya.",
+        true
+    ],
+
+    [
+        "Metamorfosis sempurna tidak mempunyai pupa.",
+        false
+    ],
+
+    [
+        "Testis menghasilkan sperma.",
+        true
+    ],
+
+    [
+        "Homeostasis menjaga kestabilan kondisi internal.",
+        true
+    ],
+
+    [
+        "Paku dibuat runcing untuk memperbesar tekanan.",
+        true
+    ],
+
+    [
+        "Koklea berhubungan dengan pendengaran.",
+        true
+    ]
+
+];
+
+let tfIndex = 0;
+let tfScore = 0;
+
+
+document
+    .getElementById("tfStart")
+    .addEventListener("click", function() {
+
+        tfIndex = 0;
+        tfScore = 0;
+
+        document.getElementById(
+            "tfScore"
+        ).textContent = 0;
+
+        document.getElementById(
+            "tfButtons"
+        ).style.display = "block";
+
+        showTF();
+
+    });
+
+
+function showTF() {
+
+    if (tfIndex >= trueFalseQuestions.length) {
+
+        document.getElementById(
+            "tfQuestion"
+        ).textContent =
+            "🎉 Tantangan selesai!";
+
+        document.getElementById(
+            "tfButtons"
+        ).style.display = "none";
+
+        unlockAchievement(
+            "Refleks Cepat"
+        );
+
+        return;
+    }
+
+    document.getElementById(
+        "tfQuestion"
+    ).textContent =
+        trueFalseQuestions[tfIndex][0];
+
+}
+
+
+function answerTF(value) {
+
+    if (
+        value ===
+        trueFalseQuestions[tfIndex][1]
+    ) {
+
+        tfScore += 10;
+
+        addXP(10);
+
+        document.getElementById(
+            "tfResult"
+        ).textContent =
+            "✅ Benar!";
+
+    } else {
+
+        document.getElementById(
+            "tfResult"
+        ).textContent =
+            "❌ Salah!";
+
+    }
+
+    document.getElementById(
+        "tfScore"
+    ).textContent =
+        tfScore;
+
+    tfIndex++;
+
+    setTimeout(showTF, 500);
+
+}
+
+
+document
+    .getElementById("trueButton")
+    .addEventListener(
+        "click",
+        function() {
+            answerTF(true);
+        }
+    );
+
+
+document
+    .getElementById("falseButton")
+    .addEventListener(
+        "click",
+        function() {
+            answerTF(false);
+        }
+    );
+
+
+/* ================================
+   MINI GAME 4
+   METAMORFOSIS
+================================ */
+
+const correctOrder = [
+    "Telur",
+    "Larva",
+    "Pupa",
+    "Imago"
+];
+
+let selectedOrder = [];
+
+
+function createMetaGame() {
+
+    const area =
+        document.getElementById(
+            "metaButtons"
+        );
+
+    area.innerHTML = "";
+
+    selectedOrder = [];
+
+    const shuffled =
+        [...correctOrder].sort(
+            function() {
+                return Math.random() - 0.5;
+            }
+        );
+
+
+    shuffled.forEach(function(item) {
+
+        const button =
+            document.createElement("button");
+
+        button.textContent =
+            item;
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                if (
+                    selectedOrder.includes(item)
+                ) {
+                    return;
+                }
+
+                selectedOrder.push(item);
+
+                button.style.opacity = "0.4";
+
+                document.getElementById(
+                    "metaResult"
+                ).textContent =
+                    "Urutan: " +
+                    selectedOrder.join(" → ");
+
+
+                if (
+                    selectedOrder.length ===
+                    correctOrder.length
+                ) {
+
+                    const correct =
+                        selectedOrder.every(
+                            function(value, index) {
+                                return (
+                                    value ===
+                                    correctOrder[index]
+                                );
+                            }
+                        );
+
+
+                    if (correct) {
+
+                        document.getElementById(
+                            "metaResult"
+                        ).textContent =
+                            "🎉 Urutan benar!";
+
+                        addXP(25);
+
+                        unlockAchievement(
+                            "Ahli Metamorfosis"
+                        );
+
+                    } else {
+
+                        document.getElementById(
+                            "metaResult"
+                        ).textContent =
+                            "❌ Urutan salah. Reset dan coba lagi.";
+
+                    }
+
+                }
+
+            }
+        );
+
+        area.appendChild(button);
+
+    });
+
+}
+
+
+document
+    .getElementById("metaReset")
+    .addEventListener(
+        "click",
+        createMetaGame
+    );
+
+createMetaGame();
+
+
+/* ================================
+   MINI GAME 5
+   TEBAK INDERA
+================================ */
+
+const senseQuestions = [
+
+    {
+        question:
+            "Bagian tubuh yang menerima rangsangan cahaya adalah...",
+        answers: [
+            "Retina",
+            "Koklea",
+            "Papila"
+        ],
+        correct: 0
+    },
+
+    {
+        question:
+            "Bagian telinga yang mengubah getaran menjadi impuls saraf adalah...",
+        answers: [
+            "Iris",
+            "Koklea",
+            "Epidermis"
+        ],
+        correct: 1
+    },
+
+    {
+        question:
+            "Bagian yang berhubungan dengan penciuman adalah...",
+        answers: [
+            "Epitel olfaktori",
+            "Retina",
+            "Gendang telinga"
+        ],
+        correct: 0
+    },
+
+    {
+        question:
+            "Papila dan tunas pengecap berhubungan dengan...",
+        answers: [
+            "Pendengaran",
+            "Pengecapan",
+            "Penglihatan"
+        ],
+        correct: 1
+    }
+
+];
+
+let senseIndex = 0;
+
+
+function showSenseQuestion() {
+
+    if (
+        senseIndex >=
+        senseQuestions.length
+    ) {
+
+        document.getElementById(
+            "senseQuestion"
+        ).textContent =
+            "🎉 Semua tantangan selesai!";
+
+        document.getElementById(
+            "senseOptions"
+        ).innerHTML = "";
+
+        unlockAchievement(
+            "Sensor Expert"
+        );
+
+        return;
+    }
+
+
+    const q =
+        senseQuestions[senseIndex];
+
+
+    document.getElementById(
+        "senseQuestion"
+    ).textContent =
+        q.question;
+
+
+    const area =
+        document.getElementById(
+            "senseOptions"
+        );
+
+    area.innerHTML = "";
+
+
+    q.answers.forEach(
+        function(answer, index) {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "btn";
+
+            button.textContent =
+                answer;
+
+            button.style.width =
+                "100%";
+
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    if (
+                        index === q.correct
+                    ) {
+
+                        document.getElementById(
+                            "senseResult"
+                        ).textContent =
+                            "✅ Tepat!";
+
+                        addXP(10);
+
+                        senseIndex++;
+
+                        setTimeout(
+                            showSenseQuestion,
+                            400
+                        );
+
+                    } else {
+
+                        document.getElementById(
+                            "senseResult"
+                        ).textContent =
+                            "❌ Coba lagi.";
+
+                    }
+
+                }
+            );
+
+
+            area.appendChild(button);
+
+        }
+    );
+
+}
+
+
+showSenseQuestion();
+
+
+/* ================================
+   MINI GAME 6
+   REACTION GAME
+================================ */
+
+const reactionButton =
+    document.getElementById(
+        "reactionButton"
+    );
+
+let reactionReady = false;
+let reactionStart = 0;
+let reactionTimeout = null;
+
+
+reactionButton.addEventListener(
+    "click",
+    function() {
+
+        if (!reactionReady) {
+
+            document.getElementById(
+                "reactionResult"
+            ).textContent =
+                "⚠️ Terlalu cepat! Tunggu sampai berubah.";
+
+            return;
+        }
+
+
+        const reactionTime =
+            Date.now() -
+            reactionStart;
+
+        reactionReady = false;
+
+        reactionButton.style.background =
+            "#263957";
+
+        reactionButton.textContent =
+            "TUNGGU...";
+
+
+        document.getElementById(
+            "reactionResult"
+        ).textContent =
+            "⚡ Waktu reaksi: " +
+            reactionTime +
+            " ms";
+
+        addXP(15);
+
+        if (reactionTime < 500) {
+
+            unlockAchievement(
+                "Refleks Kilat"
+            );
+
+        }
+
+        startReaction();
+
+    }
+);
+
+
+function startReaction() {
+
+    clearTimeout(reactionTimeout);
+
+    reactionReady = false;
+
+    reactionButton.style.background =
+        "#263957";
+
+    reactionButton.textContent =
+        "TUNGGU...";
+
+
+    const delay =
+        1500 +
+        Math.random() * 3000;
+
+
+    reactionTimeout =
+        setTimeout(
+            function() {
+
+                reactionReady = true;
+
+                reactionStart =
+                    Date.now();
+
+                reactionButton.style.background =
+                    "#16814f";
+
+                reactionButton.textContent =
+                    "KLIK SEKARANG!";
+
+            },
+            delay
+        );
+
+}
+
+
+startReaction();
+
+
+/* ================================
+   SECRET GAME
+================================ */
+
+let titleClicks = 0;
+
+
+document
+    .getElementById("secretTitle")
+    .addEventListener(
+        "click",
+        function() {
+
+            titleClicks++;
+
+            if (titleClicks === 7) {
+
+                openPage("secret");
+
+                document.getElementById(
+                    "secretResult"
+                ).textContent =
+                    "🌌 SECRET MODE TERBUKA!";
+
+                unlockAchievement(
+                    "Secret Hunter"
+                );
+
+                titleClicks = 0;
+
+            }
+
+        }
+    );
+
+
+/* ================================
+   SECRET BUTTON
+================================ */
+
+document
+    .getElementById("secretButton")
+    .addEventListener(
+        "click",
+        function() {
+
+            document.getElementById(
+                "secretResult"
+            ).textContent =
+                "🧬 Eksperimen rahasia berhasil dijalankan! +10 XP";
+
+            addXP(10);
+
+        }
+    );
+
+
+/* ================================
+   KEYBOARD SECRET
+================================ */
+
+let secretCode = "";
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key.length !== 1
+        ) {
+            return;
+        }
+
+        secretCode +=
+            event.key.toUpperCase();
+
+        if (
+            secretCode.length > 4
+        ) {
+            secretCode =
+                secretCode.slice(-4);
+        }
+
+
+        if (
+            secretCode === "IPA9"
+        ) {
+
+            openPage("secret");
+
+            document.getElementById(
+                "secretResult"
+            ).textContent =
+                "🔓 KODE IPA9 DITERIMA! +50 XP";
+
+            addXP(50);
+
+            unlockAchievement(
+                "Code Breaker"
+            );
+
+            secretCode = "";
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
